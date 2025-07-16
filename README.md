@@ -163,10 +163,6 @@ Contribuições são bem-vindas! Para contribuir:
 4. Push para a branch: `git push origin minha-feature`
 5. Abra um Pull Request
 
-## Licença
-
-Este projeto foi desenvolvido exclusivamente para fins de avaliação técnica pela Stefanini Brasil.
-
 ## Contato
 
-Dúvidas ou sugestões? Entre em contato pelo e-mail: [seu-email@exemplo.com]
+Dúvidas ou sugestões? Entre em contato pelo e-mail: soterocaue2@gmail.com
