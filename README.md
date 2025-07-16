@@ -32,7 +32,7 @@ Esta API foi desenvolvida como parte de um teste técnico, simulando um ambiente
 Clone o repositório e acesse o diretório do projeto:
 
 ```bash
-git clone <url-do-repositorio>
+git clone https://github.com/caueeex/backend-api.git
 cd backend-api/backend
 ```
 
