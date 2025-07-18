@@ -93,41 +93,66 @@ npm install
 
    **⚠️ Importante:** Se sua instalação do MySQL tem senha, altere a linha `password: ''` para `password: 'sua_senha'` ou configure a variável de ambiente `DB_PASSWORD`
 
-## Redis com Docker
+## Redis e MySQL com Docker
 
 ### **Opção 1 - Docker Compose (Recomendado):**
 
 Se você estiver na raiz do projeto, use o Docker Compose:
 
 ```bash
-# Iniciar apenas Redis (MySQL local)
-docker-compose up redis -d
+# Iniciar Redis e MySQL
+docker-compose up -d
 
-# Verificar se está rodando
+# Verificar se estão rodando
 docker-compose ps
 
 # Parar serviços
 docker-compose down
 ```
 
-**Nota:** Se você usa phpMyAdmin local, execute apenas o Redis via Docker Compose.
-
 ### **Opção 2 - Docker Manual:**
 
-Execute o Redis usando Docker:
+Execute Redis e MySQL usando Docker:
 
 ```bash
+# Iniciar MySQL
+docker run --name mysql-stefanini \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=stefanini_db \
+  -p 3306:3306 \
+  -d mysql:8.0
+
 # Iniciar Redis
-docker run --name redis -p 6379:6379 -d redis
+docker run --name redis-stefanini \
+  -p 6379:6379 \
+  -d redis
+
+# Verificar se estão rodando
+docker ps
+
+# Parar containers (quando necessário)
+docker stop mysql-stefanini redis-stefanini
+
+# Remover containers (quando necessário)
+docker rm mysql-stefanini redis-stefanini
+```
+
+### **Opção 3 - Apenas Redis (MySQL local):**
+
+Se você já tem MySQL instalado localmente:
+
+```bash
+# Iniciar apenas Redis
+docker run --name redis-stefanini -p 6379:6379 -d redis
 
 # Verificar se está rodando
 docker ps
 
 # Parar Redis (quando necessário)
-docker stop redis
+docker stop redis-stefanini
 
 # Remover container (quando necessário)
-docker rm redis
+docker rm redis-stefanini
 ```
 
 ## Execução
@@ -228,7 +253,7 @@ DB_DATABASE=stefanini_db
 1. **Erro de conexão com MySQL:**
    - Verifique se o MySQL está rodando
    - Confirme a senha no `src/app.module.ts`
-   - Execute o script `reset-database.sql` no phpMyAdmin
+   - Execute o script `setup-database.sql` no phpMyAdmin
 
 2. **Erro de conexão com Redis:**
    - Verifique se o Redis está rodando: `docker ps`
@@ -239,7 +264,7 @@ DB_DATABASE=stefanini_db
    - Ou mude a porta no `src/main.ts`
 
 4. **Erro de índices no banco:**
-   - Execute o script `reset-database.sql` para limpar o banco
+   - Execute o script `setup-database.sql` para limpar o banco
    - Ou desabilite `synchronize: true` no `app.module.ts`
 
 5. **Tabelas duplicadas (member/members, post/posts):**
