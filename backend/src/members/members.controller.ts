@@ -15,4 +15,9 @@ export class MembersController {
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<Member | null> {
     return this.membersService.findOne(id);
   }
+
+  @Get('profile/:id')
+  async getProfile(@Param('id', ParseIntPipe) id: number): Promise<Member | null> {
+    return this.membersService.findOne(id);
+  }
 } 

@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Member } from '../../members/entities/member.entity';
 
-@Entity()
+@Entity('posts')
 export class Post {
   @PrimaryGeneratedColumn()
   id: number;
@@ -11,12 +12,10 @@ export class Post {
   @Column('text')
   content: string;
 
-  @Column()
-  author: string;
+  @ManyToOne(() => Member)
+  @JoinColumn({ name: 'member_id' })
+  member: Member;
 
-  @CreateDateColumn()
-  date: Date;
-
-  @Column({ default: 0 })
-  likes: number;
+  @CreateDateColumn({ name: 'created_at' })
+  created_at: Date;
 } 

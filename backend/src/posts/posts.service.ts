@@ -11,75 +11,54 @@ export class PostsService {
     @InjectRepository(Post)
     private postsRepository: Repository<Post>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {
-    this.seedData();
-  }
+  ) {}
 
   async findAll(): Promise<Post[]> {
-    // Verificar cache primeiro
-    const cachedPosts = await this.cacheManager.get<Post[]>('posts');
+    // Tentar buscar do cache primeiro
+    const cachedPosts = await this.cacheManager.get<Post[]>('posts:all');
     if (cachedPosts) {
       return cachedPosts;
     }
 
     // Se não estiver em cache, buscar do banco
-    const posts = await this.postsRepository.find({
-      order: { date: 'DESC' },
+    const posts = await this.postsRepository.find({ 
+      relations: ['member'],
+      order: { created_at: 'DESC' }
     });
 
-    // Salvar no cache por 5 minutos
-    await this.cacheManager.set('posts', posts, 300000);
-
+    // Salvar no cache por 60 segundos
+    await this.cacheManager.set('posts:all', posts, 60);
+    
     return posts;
   }
 
   async findOne(id: number): Promise<Post | null> {
-    return this.postsRepository.findOne({ where: { id } });
+    // Tentar buscar do cache primeiro
+    const cachedPost = await this.cacheManager.get<Post>(`posts:${id}`);
+    if (cachedPost) {
+      return cachedPost;
+    }
+
+    // Se não estiver em cache, buscar do banco
+    const post = await this.postsRepository.findOne({ 
+      where: { id },
+      relations: ['member']
+    });
+
+    if (post) {
+      // Salvar no cache por 60 segundos
+      await this.cacheManager.set(`posts:${id}`, post, 60);
+    }
+    
+    return post;
   }
 
-  private async seedData() {
-    const count = await this.postsRepository.count();
-    if (count === 0) {
-      const mockPosts = [
-        {
-          title: 'Nova Tecnologia Implementada',
-          content: 'Implementamos com sucesso uma nova tecnologia que melhora significativamente a performance do sistema.',
-          author: 'João Silva',
-          likes: 24,
-        },
-        {
-          title: 'Reunião de Equipe',
-          content: 'Agendada reunião para discutir os próximos passos do projeto de desenvolvimento.',
-          author: 'Maria Santos',
-          likes: 18,
-        },
-        {
-          title: 'Atualização de Segurança',
-          content: 'Nova atualização de segurança foi aplicada em todos os sistemas.',
-          author: 'Pedro Costa',
-          likes: 31,
-        },
-        {
-          title: 'Novo Projeto Iniciado',
-          content: 'Iniciamos um novo projeto de desenvolvimento com foco em inovação e qualidade.',
-          author: 'Ana Oliveira',
-          likes: 15,
-        },
-        {
-          title: 'Melhorias no Sistema',
-          content: 'Implementamos melhorias significativas no sistema principal da empresa.',
-          author: 'Carlos Ferreira',
-          likes: 22,
-        },
-      ];
-
-      for (const postData of mockPosts) {
-        const post = this.postsRepository.create(postData);
-        await this.postsRepository.save(post);
-      }
-
-      // Limpar cache após inserir dados
-      await this.cacheManager.del('posts');
+  // Método para invalidar cache quando necessário
+  async invalidateCache(): Promise<void> {
+    await this.cacheManager.del('posts:all');
+    // Limpar cache de posts individuais (simplificado)
+    for (let i = 1; i <= 10; i++) {
+      await this.cacheManager.del(`posts:${i}`);
     }
   }
 } 

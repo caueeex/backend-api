@@ -1,6 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
 
-@Entity()
+@Entity('members')
 export class Member {
   @PrimaryGeneratedColumn()
   id: number;
@@ -11,12 +11,6 @@ export class Member {
   @Column()
   email: string;
 
-  @Column()
-  role: string;
-
-  @Column()
-  department: string;
-
-  @Column({ nullable: true })
-  avatar: string;
+  @CreateDateColumn({ name: 'created_at' })
+  created_at: Date;
 } 
