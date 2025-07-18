@@ -33,7 +33,7 @@ API para gerenciamento de postagens e membros, com cache Redis para otimização
 Clone o repositório e acesse o diretório do backend:
 
 ```bash
-git clone <url-do-repositorio>
+git clone https://github.com/caueeex/backend-api.git
 cd backend-api/backend
 npm install
 ```
