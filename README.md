@@ -97,7 +97,7 @@ npm install
 
 ### **Opção 1 - Docker Compose (Recomendado):**
 
-Se você estiver na raiz do projeto, use o Docker Compose:
+Se você tiver um arquivo `docker-compose.yml` na raiz do projeto:
 
 ```bash
 # Iniciar Redis e MySQL
@@ -109,6 +109,8 @@ docker-compose ps
 # Parar serviços
 docker-compose down
 ```
+
+**Nota:** Se não tiver o arquivo docker-compose.yml, use a Opção 2 (Docker Manual).
 
 ### **Opção 2 - Docker Manual:**
 
@@ -162,6 +164,14 @@ npm run start:dev
 ```
 
 A API estará disponível em: [http://localhost:3001](http://localhost:3001)
+
+**Logs de inicialização:**
+```
+🚀 Application is running on: http://localhost:3001
+📊 Database: localhost:3306
+🔴 Redis: localhost:6379
+🌐 CORS enabled for: http://localhost:3000
+```
 
 ## Endpoints Disponíveis
 
